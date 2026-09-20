@@ -7,6 +7,7 @@ export class ChatPanel {
     this.container = container;
     this.messages = [];
     this.currentAssistant = null;
+    this.typingEl = null;
   }
 
   addUser(text) {
@@ -33,6 +34,32 @@ export class ChatPanel {
 
   finishAssistant() {
     this.currentAssistant = null;
+  }
+
+  /**
+   * 显示"正在想…"打字动画（数字人思考时的加载反馈）
+   */
+  addTyping() {
+    this.removeTyping();
+    const item = document.createElement('div');
+    item.className = 'msg msg-system msg-typing';
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble typing-bubble';
+    bubble.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span> 暖阳正在想…';
+    item.appendChild(bubble);
+    this.container.appendChild(item);
+    this.typingEl = item;
+    this._scrollToBottom();
+  }
+
+  /**
+   * 移除"正在想…"打字动画
+   */
+  removeTyping() {
+    if (this.typingEl && this.typingEl.parentNode) {
+      this.typingEl.parentNode.removeChild(this.typingEl);
+      this.typingEl = null;
+    }
   }
 
   /**
