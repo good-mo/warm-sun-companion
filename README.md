@@ -7,8 +7,12 @@
 - 🧑‍🤝‍🧑 **数字人陪伴**：基于魔珐星云具身交互智能 SDK，渲染高清 3D 数字人
 - 🎙️ **语音对话**：支持麦克风 ASR 语音识别、打断对话（端到端 E2E）
 - 💬 **文本对话**：文本输入 → LLM 智能体 → 数字人语音播报（SSML）
-- 🌞 **情绪关怀**：温暖的陪伴交互，支持晨安/晚安/心情关怀等场景
-- 📝 **聊天记忆**：本地持久化解说记忆，越聊越懂你
+- 🌞 **关怀场景引擎**（[`core/care.js`](frontend/src/core/care.js)）：时间场景（晨安/晚安/深夜）、节日场景（元旦/春节/中秋/重阳/母亲节/父亲节等）、心情场景、生日与偏好记忆，主动发起有温度的问候
+- 💛 **情绪识别与具身协同**（[`core/care.js`](frontend/src/core/care.js) + [`AvatarView.js`](frontend/src/components/AvatarView.js)）：从用户输入识别 开心/难过/疲惫/焦虑/孤独/生气，联动状态条情绪可视化，并注入共情话术让 LLM 先安抚再回应
+- 👵 **适老化关怀模式**（[`core/care-mode.js`](frontend/src/core/care-mode.js)）：一键切换大字体/高对比度/大按钮/语音优先的界面，快捷键 `Alt+C`，记忆上次选择
+- ♿ **无障碍支持**：按钮 `aria-label`、状态条 `aria-live`、键盘焦点可见、屏幕阅读器播报
+- 📝 **聊天记忆**：本地持久化 + 后端持久化，长期记忆抽取（姓名/年龄/喜好/生日/地点），越聊越懂你
+- 🧭 **行动能力**（[`core/actions.js`](frontend/src/core/actions.js)）：待办/提醒/时间查询，以及适老化动作——用药提醒、健康记录、紧急联系人、SOS 求助
 
 ## 技术栈
 
@@ -93,9 +97,14 @@ warm-sun-companion/
 │   │   ├── config.local.js        # 本地凭证（gitignored，不提交）
 │   │   ├── config.local.example.js # 凭证模板（提交）
 │   │   ├── core/
-│   │   │   └── mofa-sdk.js    # 魔珐星云 SDK 封装
+│   │   │   ├── mofa-sdk.js    # 魔珐星云 SDK 封装
+│   │   │   ├── care.js        # 关怀场景引擎（时间/节日/情绪/记忆关怀）
+│   │   │   ├── care-mode.js   # 适老化关怀模式（大字体/无障碍）
+│   │   │   ├── memory.js      # 记忆与上下文管理
+│   │   │   ├── actions.js     # 行动能力（待办/提醒/用药/紧急联系）
+│   │   │   └── api.js         # 后端接口封装
 │   │   ├── components/    # UI 组件
-│   │   │   ├── AvatarView.js    # 数字人视窗
+│   │   │   ├── AvatarView.js    # 数字人视窗（含情绪可视化）
 │   │   │   ├── ChatPanel.js     # 聊天面板
 │   │   │   ├── VoiceInput.js    # 语音输入
 │   │   │   └── MemoryPanel.js   # 记忆面板
