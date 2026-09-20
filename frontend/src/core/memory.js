@@ -142,11 +142,73 @@ export function extractMemories(text) {
   return facts;
 }
 
+// ---------- 关怀场景注入 ----------
+
+/**
+ * 构建关怀场景上下文（时间/节日/情绪/记忆关怀）
+ * 通过注入当前时段与节日，让数字人具备「随时间变化的态度」
+ * @param {Array<{text:string}>} memories
+ * @param {Date} [now]
+ * @returns {string}
+ */
+export function buildCareContext(memories, now = new Date()) {
+  const parts = [];
+  const h = now.getHours();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  const md = m * 100 + d;
+
+  // 时段关怀
+  let timeScene = '';
+  if (h >= 5 && h < 9) {
+    timeScene = '现在是清晨，请用「早安/晨安」问候，提醒用户吃早餐、保重身体。';
+  } else if (h >= 9 && h < 12) {
+    timeScene = '现在是上午，请保持温暖自然的问候，询问用户今天的状态。';
+  } else if (h >= 12 && h < 14) {
+    timeScene = '现在是午间，请提醒用户按时吃午饭、适当午休。';
+  } else if (h >= 14 && h < 18) {
+    timeScene = '现在是下午，可以悠闲地陪用户聊聊天。';
+  } else if (h >= 18 && h < 22) {
+    timeScene = '现在是傍晚/晚间，可以关心用户今天过得怎么样。';
+  } else {
+    timeScene = '现在是深夜，请提醒用户早点休息、不要熬夜。';
+  }
+  parts.push('[时段关怀] ' + timeScene);
+
+  // 节日关怀
+  const festivals = {
+    101: '元旦',
+    214: '情人节',
+    308: '妇女节',
+    501: '劳动节',
+    520: '520',
+    601: '儿童节',
+    1001: '国庆节',
+    1225: '圣诞节',
+  };
+  const festival = festivals[md];
+  if (festival) {
+    parts.push('[节日关怀] 今天是' + festival + '，请先送上节日祝福。');
+  }
+
+  // 记忆关怀（昵称/生日/喜好）
+  if (memories && memories.length > 0) {
+    const memLines = memories
+      .slice(-8)
+      .map((mem) => '- ' + (mem.text || ''))
+      .join('\n');
+    parts.push('[用户记忆] 可据此称呼用户、回忆其喜好：\n' + memLines);
+  }
+
+  return parts.join('\n\n');
+}
+
 // ---------- 上下文提示词构建 ----------
 
 /**
  * 构建注入到 ask() 文本中的上下文提示词
- * 将长期记忆 + 最近对话 + 用户当前输入拼装，增强多轮理解与个性化
+ * 将长期记忆 + 最近对话 + 关怀场景（时间/节日） + 用户当前输入拼装，
+ * 增强多轮理解、个性化和「有温度的陪伴」。
  * @param {string} userText 用户当前输入
  * @returns {string} 注入后的完整文本
  */
@@ -159,18 +221,15 @@ export function buildContextPrompt(userText) {
   // 系统人设
   parts.push(
     '[系统] 你是"暖阳"，一位温暖、贴心、有记忆的AI陪伴数字人。' +
-      '请用温暖、自然、口语化的语气与用户交流，适当关心用户，' +
-      '并基于下面的记忆与对话上下文进行连贯的回应。'
+      '请用温暖、自然、口语化的语气与用户交流，主动关心用户，' +
+      '并基于下面的记忆、关怀场景与对话上下文进行连贯的回应。' +
+      '若用户表达了难过、疲惫、焦虑或孤独等情绪，请先共情安抚，再给建议。' +
+      '说话请简洁、口语化，避免机械的客服腔调。'
   );
 
-  // 长期记忆
-  if (memories.length > 0) {
-    const memLines = memories
-      .slice(-8)
-      .map((m) => '- ' + m.text)
-      .join('\n');
-    parts.push('[关于用户的记忆]\n' + memLines);
-  }
+  // 关怀场景（时间/节日/记忆）——工具的「温度」来源
+  const careContext = buildCareContext(memories);
+  parts.push(careContext);
 
   // 最近对话
   if (conversation.length > 0) {
