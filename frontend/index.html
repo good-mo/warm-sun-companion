@@ -11,20 +11,50 @@
     <!-- 左侧：数字人展示区 -->
     <section class="avatar-panel">
       <div class="avatar-header">
+        <div class="brand">
+          <svg class="brand-logo" viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
+            <circle cx="24" cy="24" r="12" fill="#ff9a3c" />
+            <g stroke="#ff9a3c" stroke-width="3" stroke-linecap="round">
+              <line x1="24" y1="2" x2="24" y2="8" />
+              <line x1="24" y1="40" x2="24" y2="46" />
+              <line x1="2" y1="24" x2="8" y2="24" />
+              <line x1="40" y1="24" x2="46" y2="24" />
+              <line x1="8.4" y1="8.4" x2="12.7" y2="12.7" />
+              <line x1="35.3" y1="35.3" x2="39.6" y2="39.6" />
+              <line x1="8.4" y1="39.6" x2="12.7" y2="35.3" />
+              <line x1="35.3" y1="12.7" x2="39.6" y2="8.4" />
+            </g>
+          </svg>
+          <div class="brand-text">
+            <span class="brand-name">暖阳陪伴</span>
+            <span class="brand-sub">Warm Sun Companion</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="btn-debug" class="debug-toggle" title="开发者模式" aria-label="开发者模式">⚙️</button>
+          <button id="btn-care-mode" class="care-mode-switch" role="switch" aria-checked="false" aria-label="关怀模式">
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+            <span class="switch-label">关怀模式</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="avatar-status">
         <span class="status-dot" id="status-dot"></span>
         <span id="status-text">初始化中...</span>
-        <button id="btn-care-mode" class="care-mode-btn" title="切换到关怀模式" aria-label="切换到关怀模式">
-          关怀模式
-        </button>
       </div>
+
       <div id="avatar-container" class="avatar-container"></div>
+
       <!-- 具身状态条：聆听/思考/说话 + 情绪 + 关键动作 -->
-      <div class="avatar-state-bar" id="avatar-state-bar">
+      <div class="avatar-state-bar" id="avatar-state-bar" aria-live="assertive">
         <span class="avatar-state-label" id="avatar-state-label"></span>
         <span class="avatar-state-emotion" id="avatar-state-emotion"></span>
         <span class="avatar-state-action" id="avatar-state-action"></span>
       </div>
-      <div class="avatar-controls">
+
+      <!-- 开发者调试控件（默认隐藏，点击 ⚙️ 显示） -->
+      <div class="avatar-controls" id="avatar-controls" hidden>
         <button id="btn-idle" class="ctrl-btn">待机</button>
         <button id="btn-listen" class="ctrl-btn">聆听</button>
         <button id="btn-think" class="ctrl-btn">思考</button>
@@ -35,28 +65,31 @@
     <!-- 右侧：对话与记忆面板 -->
     <section class="chat-panel">
       <div class="chat-header">
-        <h2>暖阳陪伴</h2>
-        <span class="chat-subtitle">基于魔珐星云具身交互智能SDK</span>
+        <div class="chat-title">
+          <h2>暖阳陪伴</h2>
+          <span class="chat-subtitle">基于魔珐星云具身交互智能SDK</span>
+        </div>
+        <button id="btn-toggle-memory" class="memory-toggle" aria-label="切换记忆面板" aria-expanded="true">📖 记忆</button>
       </div>
 
-      <div id="chat-messages" class="chat-messages"></div>
+      <div id="chat-messages" class="chat-messages" role="log" aria-live="polite"></div>
 
       <div class="chat-input">
-        <button id="btn-voice" class="voice-btn" title="语音输入">🎤</button>
+        <button id="btn-voice" class="voice-btn" title="按住说话" aria-label="语音输入">🎤</button>
         <input id="text-input" type="text" placeholder="输入你想说的话..." />
         <button id="btn-send" class="send-btn">发送</button>
       </div>
     </section>
-  </div>
 
-  <!-- 记忆面板（可折叠） -->
-  <aside id="memory-panel" class="memory-panel">
-    <div class="memory-header">
-      <h3>陪伴记忆</h3>
-      <button id="btn-toggle-memory">收起</button>
-    </div>
-    <ul id="memory-list" class="memory-list"></ul>
-  </aside>
+    <!-- 记忆面板（作为 #app 的 flex 子项，可折叠，不再遮挡对话） -->
+    <aside id="memory-panel" class="memory-panel" role="complementary" aria-label="陪伴记忆">
+      <div class="memory-header">
+        <h3>陪伴记忆</h3>
+        <button id="btn-close-memory" class="memory-close" aria-label="收起记忆面板">✕</button>
+      </div>
+      <ul id="memory-list" class="memory-list"></ul>
+    </aside>
+  </div>
 
   <!-- 魔珐星云 SDK（官方单文件版，自动暴露 window.XingyunAvatarAgent，无需 npm） -->
   <script src="./vendor/xmov-avatar/xmovAvatar_e2e.latest.js"></script>
