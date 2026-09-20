@@ -5,13 +5,14 @@
   --bg: #fdf6ec;
   --panel-bg: #ffffff;
   --text: #3a3a3a;
-  --text-light: #8a8a8a;
+  --text-light: #6b6b6b;
   --border: #f0e4d4;
   --success: #4caf50;
   --error: #f44336;
   --listening: #ff5722;
   --speaking: #2196f3;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --radius: 16px;
 }
 
 /* 关怀模式（适老化）：大字体 + 高对比度 + 简化界面
@@ -22,9 +23,9 @@ body.care-mode {
   --bg: #fffaf0;
   --panel-bg: #ffffff;
   --text: #1a1a1a;
-  --text-light: #555555;
+  --text-light: #4a4a4a;
   --border: #d9c5a8;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 body.care-mode #app {
@@ -32,65 +33,77 @@ body.care-mode #app {
 }
 
 body.care-mode .avatar-header {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 body.care-mode .chat-header h2 {
-  font-size: 26px;
+  font-size: 28px;
 }
 
 body.care-mode .chat-subtitle {
-  font-size: 15px;
+  font-size: 16px;
 }
 
 body.care-mode .bubble {
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.7;
-  padding: 14px 18px;
+  padding: 16px 20px;
 }
 
 body.care-mode .msg-system .bubble {
-  font-size: 15px;
+  font-size: 17px;
 }
 
 body.care-mode .ctrl-btn {
-  font-size: 18px;
-  padding: 12px 24px;
-  border-radius: 24px;
+  font-size: 20px;
+  padding: 14px 28px;
+  border-radius: 28px;
 }
 
 body.care-mode .voice-btn {
-  width: 56px;
-  height: 56px;
-  font-size: 24px;
+  width: 60px;
+  height: 60px;
+  font-size: 26px;
 }
 
 body.care-mode #text-input {
-  font-size: 18px;
-  padding: 14px 18px;
+  font-size: 20px;
+  padding: 16px 20px;
 }
 
 body.care-mode .send-btn {
-  font-size: 18px;
-  padding: 0 28px;
+  font-size: 20px;
+  padding: 0 32px;
 }
 
 body.care-mode .avatar-state-label,
 body.care-mode .avatar-state-emotion,
 body.care-mode .avatar-state-action {
-  font-size: 17px;
+  font-size: 19px;
 }
 
 body.care-mode .memory-item {
-  font-size: 17px;
+  font-size: 19px;
 }
 
 body.care-mode .memory-time {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 body.care-mode .memory-header h3 {
-  font-size: 20px;
+  font-size: 22px;
+}
+
+body.care-mode .brand-name {
+  font-size: 24px;
+}
+
+body.care-mode .brand-sub {
+  font-size: 14px;
+}
+
+body.care-mode .switch-label {
+  font-size: 18px;
 }
 
 /* 情绪颜色映射（AvatarView 状态条的情绪展示） */
@@ -100,31 +113,6 @@ body.care-mode .memory-header h3 {
 .avatar-state-emotion[data-emotion='anxious'] { color: #7c3aed; background: rgba(124, 58, 237, 0.12); }
 .avatar-state-emotion[data-emotion='lonely'] { color: #0ea5e9; background: rgba(14, 165, 233, 0.12); }
 .avatar-state-emotion[data-emotion='angry'] { color: #ef4444; background: rgba(239, 68, 68, 0.12); }
-
-/* 关怀模式切换按钮（右上角，始终可见） */
-.care-mode-btn {
-  margin-left: auto;
-  padding: 6px 14px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--panel-bg);
-  color: var(--primary-dark);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: var(--shadow);
-}
-
-.care-mode-btn:hover {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
-}
-
-body.care-mode .care-mode-btn {
-  font-size: 16px;
-  padding: 8px 18px;
-}
 
 /* 键盘焦点可见性（无障碍）：让 Tab 键能看清聚焦控件 */
 button:focus-visible,
@@ -146,6 +134,7 @@ body {
   color: var(--text);
   height: 100vh;
   overflow: hidden;
+  font-size: 16px;
 }
 
 #app {
@@ -161,14 +150,123 @@ body {
   background: linear-gradient(160deg, #fff7ec 0%, #ffe9d1 100%);
   border-right: 1px solid var(--border);
   position: relative;
+  min-width: 0;
 }
 
 .avatar-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 12px;
   padding: 16px 20px;
   font-size: 14px;
+  color: var(--text-light);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  flex-shrink: 0;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+.brand-sub {
+  font-size: 11px;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.debug-toggle {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--panel-bg);
+  color: var(--text-light);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.debug-toggle:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* 关怀模式开关（switch 样式） */
+.care-mode-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 20px;
+}
+
+.switch-track {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: #d9d9d9;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.care-mode-switch[aria-checked='true'] .switch-track {
+  background: var(--primary);
+}
+
+.care-mode-switch[aria-checked='true'] .switch-thumb {
+  transform: translateX(20px);
+}
+
+.switch-label {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.avatar-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px 8px;
+  font-size: 13px;
   color: var(--text-light);
 }
 
@@ -237,20 +335,20 @@ body {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   background: rgba(255, 255, 255, 0.85);
   border-top: 1px solid var(--border);
-  min-height: 36px;
+  min-height: 40px;
   flex-wrap: wrap;
 }
 
 .avatar-state-label {
   display: none;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--primary-dark);
-  padding: 2px 12px;
-  border-radius: 12px;
+  padding: 4px 14px;
+  border-radius: 14px;
   background: rgba(255, 154, 60, 0.12);
 }
 
@@ -260,18 +358,19 @@ body {
 }
 
 .avatar-state-emotion {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--speaking);
-  padding: 2px 12px;
-  border-radius: 12px;
+  padding: 4px 14px;
+  border-radius: 14px;
   background: rgba(33, 150, 243, 0.1);
+  font-weight: 600;
 }
 
 .avatar-state-action {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--listening);
-  padding: 2px 12px;
-  border-radius: 12px;
+  padding: 4px 14px;
+  border-radius: 14px;
   background: rgba(255, 87, 34, 0.1);
 }
 
@@ -283,7 +382,7 @@ body {
 }
 
 .ctrl-btn {
-  padding: 8px 18px;
+  padding: 10px 20px;
   border: none;
   border-radius: 20px;
   background: var(--panel-bg);
@@ -291,6 +390,7 @@ body {
   cursor: pointer;
   box-shadow: var(--shadow);
   transition: all 0.2s;
+  min-height: 44px;
 }
 
 .ctrl-btn:hover {
@@ -315,11 +415,20 @@ body {
   flex-direction: column;
   background: var(--panel-bg);
   border-left: 1px solid var(--border);
+  flex-shrink: 0;
 }
 
 .chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 20px;
   border-bottom: 1px solid var(--border);
+}
+
+.chat-title {
+  display: flex;
+  flex-direction: column;
 }
 
 .chat-header h2 {
@@ -330,6 +439,23 @@ body {
 .chat-subtitle {
   font-size: 12px;
   color: var(--text-light);
+}
+
+.memory-toggle {
+  border: 1px solid var(--border);
+  background: var(--panel-bg);
+  color: var(--primary-dark);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 40px;
+}
+
+.memory-toggle:hover {
+  background: var(--primary);
+  color: #fff;
 }
 
 .chat-messages {
@@ -359,9 +485,9 @@ body {
 
 .bubble {
   max-width: 80%;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-radius: 16px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
   word-break: break-word;
 }
@@ -378,10 +504,16 @@ body {
   border-bottom-left-radius: 4px;
 }
 
+/* 系统消息：关怀问候/情绪提示用卡片式气泡强化 */
 .msg-system .bubble {
-  background: transparent;
-  color: var(--text-light);
-  font-size: 12px;
+  background: rgba(255, 154, 60, 0.1);
+  color: var(--primary-dark);
+  font-size: 13px;
+  border: 1px solid rgba(255, 154, 60, 0.25);
+  border-radius: 20px;
+  padding: 8px 16px;
+  text-align: center;
+  max-width: 90%;
 }
 
 .chat-input {
@@ -392,14 +524,19 @@ body {
 }
 
 .voice-btn {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border: none;
   border-radius: 50%;
   background: #f5f5f5;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.voice-btn:hover {
+  background: var(--primary);
 }
 
 .voice-btn.active {
@@ -409,11 +546,12 @@ body {
 
 #text-input {
   flex: 1;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border: 1px solid var(--border);
-  border-radius: 22px;
-  font-size: 14px;
+  border-radius: 24px;
+  font-size: 16px;
   outline: none;
+  min-height: 48px;
 }
 
 #text-input:focus {
@@ -421,37 +559,37 @@ body {
 }
 
 .send-btn {
-  padding: 0 20px;
+  padding: 0 24px;
   border: none;
-  border-radius: 22px;
+  border-radius: 24px;
   background: var(--primary);
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
   transition: all 0.2s;
+  min-height: 48px;
 }
 
 .send-btn:hover {
   background: var(--primary-dark);
 }
 
-/* 记忆面板 */
+/* 记忆面板：作为 #app 的 flex 子项，可折叠，不再遮挡对话 */
 .memory-panel {
-  position: fixed;
-  right: 0;
-  top: 0;
-  bottom: 0;
   width: 300px;
   background: var(--panel-bg);
   border-left: 1px solid var(--border);
-  box-shadow: var(--shadow);
-  transform: translateX(0);
-  transition: transform 0.3s;
-  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: width 0.3s, opacity 0.3s;
+  overflow: hidden;
 }
 
 .memory-panel.collapsed {
-  transform: translateX(100%);
+  width: 0;
+  opacity: 0;
+  border-left: none;
 }
 
 .memory-header {
@@ -460,6 +598,7 @@ body {
   align-items: center;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
 }
 
 .memory-header h3 {
@@ -467,31 +606,40 @@ body {
   color: var(--primary-dark);
 }
 
-.memory-header button {
+.memory-close {
   border: none;
   background: transparent;
   color: var(--text-light);
   cursor: pointer;
-  font-size: 13px;
+  font-size: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.memory-close:hover {
+  background: #f5f5f5;
+  color: var(--error);
 }
 
 .memory-list {
   list-style: none;
   padding: 12px 20px;
   overflow-y: auto;
-  max-height: calc(100vh - 60px);
+  flex: 1;
 }
 
 .memory-item {
   padding: 10px 0;
   border-bottom: 1px solid var(--border);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .memory-time {
   display: block;
   color: var(--text-light);
-  font-size: 11px;
+  font-size: 12px;
   margin-bottom: 4px;
 }
 
@@ -501,7 +649,63 @@ body {
 
 .memory-empty {
   color: var(--text-light);
-  font-size: 13px;
+  font-size: 14px;
   text-align: center;
   padding: 20px 0;
+  line-height: 1.6;
+}
+
+/* 加载/思考反馈：打字动画 */
+.typing-dots {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-dark);
+  animation: typing 1.2s infinite;
+}
+
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* 记忆分组标题与空状态引导（MemoryPanel v2） */
+.memory-group-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  padding: 12px 0 4px;
+  border-bottom: none;
+  list-style: none;
+}
+
+.memory-group-header:first-child {
+  padding-top: 0;
+}
+
+.memory-hint {
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-top: 8px;
+  background: rgba(255, 154, 60, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+body.care-mode .memory-hint {
+  font-size: 17px;
+}
+
+body.care-mode .memory-group-header {
+  font-size: 17px;
 }
