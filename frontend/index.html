@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>暖阳陪伴 · 数字人</title>
+  <link rel="stylesheet" href="./src/styles/main.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- 左侧：数字人展示区 -->
+    <section class="avatar-panel">
+      <div class="avatar-header">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">初始化中...</span>
+      </div>
+      <div id="avatar-container" class="avatar-container"></div>
+      <!-- 具身状态条：聆听/思考/说话 + 情绪 + 关键动作 -->
+      <div class="avatar-state-bar" id="avatar-state-bar">
+        <span class="avatar-state-label" id="avatar-state-label"></span>
+        <span class="avatar-state-emotion" id="avatar-state-emotion"></span>
+        <span class="avatar-state-action" id="avatar-state-action"></span>
+      </div>
+      <div class="avatar-controls">
+        <button id="btn-idle" class="ctrl-btn">待机</button>
+        <button id="btn-listen" class="ctrl-btn">聆听</button>
+        <button id="btn-think" class="ctrl-btn">思考</button>
+        <button id="btn-interrupt" class="ctrl-btn danger">打断</button>
+      </div>
+    </section>
+
+    <!-- 右侧：对话与记忆面板 -->
+    <section class="chat-panel">
+      <div class="chat-header">
+        <h2>暖阳陪伴</h2>
+        <span class="chat-subtitle">基于魔珐星云具身交互智能SDK</span>
+      </div>
+
+      <div id="chat-messages" class="chat-messages"></div>
+
+      <div class="chat-input">
+        <button id="btn-voice" class="voice-btn" title="语音输入">🎤</button>
+        <input id="text-input" type="text" placeholder="输入你想说的话..." />
+        <button id="btn-send" class="send-btn">发送</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- 记忆面板（可折叠） -->
+  <aside id="memory-panel" class="memory-panel">
+    <div class="memory-header">
+      <h3>陪伴记忆</h3>
+      <button id="btn-toggle-memory">收起</button>
+    </div>
+    <ul id="memory-list" class="memory-list"></ul>
+  </aside>
+
+  <!-- 魔珐星云 SDK（官方单文件版，自动暴露 window.XingyunAvatarAgent，无需 npm） -->
+  <script src="./vendor/xmov-avatar/xmovAvatar_e2e.latest.js"></script>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
