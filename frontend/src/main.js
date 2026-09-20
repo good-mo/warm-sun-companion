@@ -9,6 +9,7 @@
  * - 行动能力延伸：识别 LLM 动作标记并执行（待办/提醒/用药/紧急联系等）
  * - 关怀场景引擎：时间/节日/心情/生日/偏好的主动关怀（有温度的陪伴）
  * - 适老化关怀模式：大字体/高对比度/语音优先/无障碍（一键切换）
+ * - 界面优化：品牌标识、开发者模式、打字动画、记忆分类、无障碍
  */
 import { MofaCompanion } from './core/mofa-sdk.js';
 import { ChatPanel } from './components/ChatPanel.js';
@@ -27,7 +28,7 @@ import {
 import { executeActions, stripActions } from './core/actions.js';
 import { fetchMemories, postMemory } from './core/api.js';
 import { detectEmotion, getTimeScene, getFestival, buildMemoryCare, shouldProactiveCare } from './core/care.js';
-import { initCareMode, toggleCareMode, isCareMode } from './core/care-mode.js';
+import { initCareMode, toggleCareMode, isCareMode, syncCareModeUI } from './core/care-mode.js';
 
 // 全局状态
 const state = {
@@ -51,7 +52,16 @@ const EMOTION_UI = {
   angry: { label: '生气', emoji: '😠' },
 };
 
-// 情绪 → 具身展示映射，用于状态条
+// 情绪 → 数字人具身动作联动（若 SDK 支持对应动作）
+const EMOTION_ACTION = {
+  happy: 'smile',
+  sad: 'comfort',
+  tired: 'yawn',
+  anxious: 'soothe',
+  lonely: 'hug',
+  angry: 'calm',
+};
+
 function getEl(id) {
   return document.getElementById(id);
 }
@@ -66,7 +76,7 @@ function handleEmotion(text) {
   if (!emotion) return '';
   state.lastEmotion = emotion.emotion;
 
-  // 具身协同：在状态条展示情绪
+  // 具身协同：在状态条展示情绪（大图标 + 文案）
   if (state.avatar) {
     state.avatar.showEmotion({
       emotion: emotion.emotion,
@@ -130,12 +140,14 @@ function maybeProactiveCare() {
 }
 
 async function bootstrap() {
-  // 初始化关怀模式（读取 localStorage 并应用 class/无障碍属性）
+  // 初始化关怀模式（读取 localStorage 并应用 class/无障碍属性 + switch UI）
   initCareMode();
-  // 关怀模式按钮文案初始化
-  const careBtn = getEl('btn-care-mode');
-  if (careBtn) {
-    careBtn.textContent = isCareMode() ? '标准模式' : '关怀模式';
+
+  // 初始化记忆面板切换按钮状态（面板默认展开，按钮显示「收起」）
+  const memToggleInit = getEl('btn-toggle-memory');
+  if (memToggleInit) {
+    memToggleInit.textContent = '✕ 收起';
+    memToggleInit.setAttribute('aria-expanded', 'true');
   }
 
   const chat = new ChatPanel(getEl('chat-messages'));
@@ -204,8 +216,9 @@ async function bootstrap() {
         }
         // 情绪识别与具身可视化
         const emotionHint = handleEmotion(result.text);
-        // 具身协同：思考（Think）
+        // 具身协同：思考（Think）+ 打字动画
         avatar.showState('思考中');
+        chat.addTyping();
         setStatus('思考中...', 'thinking');
         // 注入记忆 + 情绪 + 上下文后发送
         const base = buildContextPrompt(result.text);
@@ -216,8 +229,10 @@ async function bootstrap() {
     onLLMResponse: (response) => {
       // 具身协同：说话（Speak）
       if (response.event === 'chunk' && response.text) {
+        chat.removeTyping();
         chat.appendAssistant(response.text);
       } else if (response.event === 'done') {
+        chat.removeTyping();
         // 动作执行：识别 [ACTION:xxx] 标记并执行（含适老化动作：用药/紧急联系等）
         const text = chat.getLastAssistantText();
         executeActions(text).then((results) => {
@@ -251,11 +266,13 @@ async function bootstrap() {
       } else if (event.state === 'interrupted') {
         setStatus('已打断', 'online');
         avatar.clearState();
+        chat.removeTyping();
       } else if (event.state === 'completed') {
         setStatus('在线', 'online');
       } else if (event.state === 'failed') {
         setStatus('对话失败', 'error');
         avatar.clearState();
+        chat.removeTyping();
       }
     },
     onSpeakStateChange: (event) => {
@@ -317,7 +334,9 @@ function bindEvents() {
   const btnListen = getEl('btn-listen');
   const btnThink = getEl('btn-think');
   const btnInterrupt = getEl('btn-interrupt');
+  const btnDebug = getEl('btn-debug');
   const btnToggleMemory = getEl('btn-toggle-memory');
+  const btnCloseMemory = getEl('btn-close-memory');
   const btnCareMode = getEl('btn-care-mode');
 
   btnSend.addEventListener('click', () => {
@@ -354,6 +373,20 @@ function bindEvents() {
     }
   });
 
+  // 开发者模式：切换调试控件显示/隐藏
+  if (btnDebug) {
+    btnDebug.addEventListener('click', () => {
+      const controls = getEl('avatar-controls');
+      if (!controls) return;
+      const willShow = controls.hidden;
+      controls.hidden = !willShow;
+      btnDebug.classList.toggle('active', willShow);
+      if (willShow && state.chat) {
+        state.chat.addSystem('开发者模式已开启（显示调试控件）');
+      }
+    });
+  }
+
   // 待机：停止当前对话/说话，回到待命状态
   btnIdle.addEventListener('click', () => {
     if (!state.companion) return;
@@ -368,6 +401,7 @@ function bindEvents() {
     state.isListening = false;
     btnVoice.classList.remove('active');
     if (state.avatar) state.avatar.clearState();
+    if (state.chat) state.chat.removeTyping();
     setStatus('待机', 'online');
     state.chat.addSystem('暖阳进入待机状态');
   });
@@ -396,6 +430,7 @@ function bindEvents() {
       // ignore
     }
     if (state.avatar) state.avatar.showState('思考中');
+    state.chat.addTyping();
     setStatus('思考中...', 'thinking');
     state.chat.addSystem('暖阳正在思考...');
   });
@@ -409,22 +444,30 @@ function bindEvents() {
     }
     state.isAsking = false;
     if (state.avatar) state.avatar.clearState();
+    if (state.chat) state.chat.removeTyping();
     setStatus('已打断', 'online');
     state.chat.addSystem('已打断当前对话');
   });
 
-  // 关怀模式切换：适老化大字体/高对比度一键切换
+  // 关怀模式切换：适老化大字体/高对比度一键切换（switch UI 由 care-mode.js 同步）
   btnCareMode.addEventListener('click', () => {
     const enabled = toggleCareMode();
-    btnCareMode.textContent = enabled ? '标准模式' : '关怀模式';
+    syncCareModeUI(enabled);
     state.chat.addSystem(enabled ? '已开启关怀模式（大字体·高对比度·语音优先）' : '已切换为标准模式');
   });
 
-  btnToggleMemory.addEventListener('click', () => {
+  // 记忆面板折叠：对话面板头部按钮 + 关闭按钮都可用
+  const toggleMemoryPanel = () => {
     const panel = getEl('memory-panel');
-    panel.classList.toggle('collapsed');
-    btnToggleMemory.textContent = panel.classList.contains('collapsed') ? '展开' : '收起';
-  });
+    if (!panel) return;
+    const collapsed = panel.classList.toggle('collapsed');
+    btnToggleMemory.textContent = collapsed ? '📖 记忆' : '✕';
+    btnToggleMemory.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  };
+  btnToggleMemory.addEventListener('click', toggleMemoryPanel);
+  if (btnCloseMemory) {
+    btnCloseMemory.addEventListener('click', toggleMemoryPanel);
+  }
 
   // 键盘无障碍：支持用快捷键切换关怀模式（Alt+C）
   document.addEventListener('keydown', (e) => {
@@ -453,8 +496,9 @@ function sendText(text) {
   }
   // 情绪识别与具身可视化
   const emotionHint = handleEmotion(text);
-  // 具身协同：思考
+  // 具身协同：思考 + 打字动画（加载反馈）
   if (state.avatar) state.avatar.showState('思考中');
+  if (state.chat) state.chat.addTyping();
   setStatus('思考中...', 'thinking');
   // 注入记忆 + 情绪 + 上下文
   const base = buildContextPrompt(text);
