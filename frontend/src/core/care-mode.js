@@ -37,6 +37,7 @@ export function setCareMode(enabled) {
     // 忽略存储失败
   }
   applyCareMode(enabled);
+  syncCareModeUI(enabled);
 }
 
 /**
@@ -47,6 +48,19 @@ export function toggleCareMode() {
   const next = !isCareMode();
   setCareMode(next);
   return next;
+}
+
+/**
+ * 同步关怀模式开关 UI（switch 的 aria-checked 与文案）
+ * @param {boolean} enabled
+ */
+export function syncCareModeUI(enabled) {
+  const btn = document.getElementById('btn-care-mode');
+  if (btn) {
+    btn.setAttribute('aria-checked', enabled ? 'true' : 'false');
+    const label = btn.querySelector('.switch-label');
+    if (label) label.textContent = enabled ? '关怀模式' : '标准模式';
+  }
 }
 
 /**
@@ -74,6 +88,8 @@ export function applyCareMode(enabled) {
     'btn-think': '思考',
     'btn-interrupt': '打断',
     'btn-toggle-memory': '切换记忆面板',
+    'btn-close-memory': '收起记忆面板',
+    'btn-debug': '开发者模式',
   };
   Object.keys(ariaMap).forEach((id) => {
     const el = document.getElementById(id);
@@ -85,7 +101,7 @@ export function applyCareMode(enabled) {
   // 无障碍：为状态条设置 aria-live，让屏幕阅读器播报状态变化
   const stateBar = document.getElementById('avatar-state-bar');
   if (stateBar) {
-    stateBar.setAttribute('aria-live', 'polite');
+    stateBar.setAttribute('aria-live', 'assertive');
     stateBar.setAttribute('role', 'status');
   }
   const statusText = document.getElementById('status-text');
@@ -99,12 +115,14 @@ export function applyCareMode(enabled) {
  */
 export function initCareMode() {
   applyCareMode(isCareMode());
+  syncCareModeUI(isCareMode());
 }
 
 export default {
   isCareMode,
   setCareMode,
   toggleCareMode,
+  syncCareModeUI,
   applyCareMode,
   initCareMode,
 };
