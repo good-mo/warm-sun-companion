@@ -53,6 +53,18 @@ export class AvatarView {
   }
 
   /**
+   * 展示具身状态（如 聆听中/思考中/说话中），并联动情绪
+   * @param {string} label
+   * @param {string} emotion 情绪标识（happy/sad/tired/anxious/lonely/angry）
+   */
+  showStateWithEmotion(label, emotion) {
+    this.showState(label);
+    if (emotion) {
+      this.showEmotion(emotion);
+    }
+  }
+
+  /**
    * 清除具身状态
    */
   clearState() {
@@ -64,13 +76,27 @@ export class AvatarView {
 
   /**
    * 展示情绪状态（Emotion）
+   * @param {string|{emotion:string,label:string,emoji:string}} emotion
    */
   showEmotion(emotion) {
+    if (!emotion) {
+      if (this.emotionEl) this.emotionEl.textContent = '';
+      if (this.opts && this.opts.onEmotion) this.opts.onEmotion('');
+      return;
+    }
+    let display = emotion;
+    let key = emotion;
+    if (typeof emotion === 'object') {
+      display = (emotion.emoji ? emotion.emoji + ' ' : '') + (emotion.label || emotion.emotion || '');
+      key = emotion.emotion || display;
+    }
     if (this.emotionEl) {
-      this.emotionEl.textContent = emotion || '';
+      this.emotionEl.textContent = display;
+      // 用 data-emotion 属性驱动情绪颜色
+      this.emotionEl.dataset.emotion = key;
     }
     if (this.opts && this.opts.onEmotion) {
-      this.opts.onEmotion(emotion);
+      this.opts.onEmotion(key);
     }
   }
 
