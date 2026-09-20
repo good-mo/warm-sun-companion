@@ -26,6 +26,8 @@ body.care-mode {
   --text-light: #4a4a4a;
   --border: #d9c5a8;
   font-size: 20px;
+  /* 允许内容超高时滚动，避免底部/右侧按钮被裁切遮挡 */
+  overflow: auto;
 }
 
 body.care-mode #app {
@@ -104,6 +106,29 @@ body.care-mode .brand-sub {
 
 body.care-mode .switch-label {
   font-size: 18px;
+}
+
+/* 关怀模式稳健布局：大按钮放大后不被压缩/遮挡 */
+body.care-mode .avatar-header,
+body.care-mode .avatar-status,
+body.care-mode .avatar-state-bar,
+body.care-mode .avatar-controls,
+body.care-mode .chat-header,
+body.care-mode .chat-input,
+body.care-mode .memory-header {
+  flex-shrink: 0;
+}
+
+/* 数字人区域让出弹性空间，优先保证操作按钮完整可见 */
+body.care-mode .avatar-container {
+  flex-shrink: 1;
+  min-height: 240px;
+}
+
+/* 头部操作区与记忆折叠按钮不被挤压 */
+body.care-mode .header-actions,
+body.care-mode .memory-toggle {
+  flex-shrink: 0;
 }
 
 /* 情绪颜色映射（AvatarView 状态条的情绪展示） */
@@ -376,6 +401,8 @@ body {
 
 .avatar-controls {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
   padding: 16px 20px;
   justify-content: center;
