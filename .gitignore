@@ -1,0 +1,31 @@
+# 依赖
+node_modules/
+dist/
+build/
+
+# 环境与密钥
+.env
+.env.*
+*.local
+config.local.js
+config.local.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# 数据
+backend/data/
+*.sqlite3
+*.db
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# 日志
+*.log
