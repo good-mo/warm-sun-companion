@@ -1,0 +1,38 @@
+# 暖阳陪伴 - Docker Compose 一键部署
+# 用法：docker compose up -d --build
+# 前端：http://localhost:5173
+# 后端：http://localhost:8000/api/health
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: warm-sun-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - warm-sun-net
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: warm-sun-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - warm-sun-data:/app/data
+    restart: unless-stopped
+    networks:
+      - warm-sun-net
+
+volumes:
+  warm-sun-data:
+
+networks:
+  warm-sun-net:
+    driver: bridge
