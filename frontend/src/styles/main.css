@@ -1,0 +1,388 @@
+/* 暖阳陪伴 - 全局样式 */
+:root {
+  --primary: #ff9a3c;
+  --primary-dark: #f07f1a;
+  --bg: #fdf6ec;
+  --panel-bg: #ffffff;
+  --text: #3a3a3a;
+  --text-light: #8a8a8a;
+  --border: #f0e4d4;
+  --success: #4caf50;
+  --error: #f44336;
+  --listening: #ff5722;
+  --speaking: #2196f3;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  height: 100vh;
+}
+
+/* 左侧数字人面板 */
+.avatar-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(160deg, #fff7ec 0%, #ffe9d1 100%);
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+
+.avatar-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-light);
+  display: inline-block;
+}
+
+.status-dot.online {
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
+}
+
+.status-dot.listening {
+  background: var(--listening);
+  box-shadow: 0 0 8px var(--listening);
+  animation: pulse 1s infinite;
+}
+
+.status-dot.speaking {
+  background: var(--speaking);
+  box-shadow: 0 0 8px var(--speaking);
+  animation: pulse 1s infinite;
+}
+
+.status-dot.error {
+  background: var(--error);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* 思考状态灯效 */
+.status-dot.thinking {
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+  animation: pulse 0.6s infinite;
+}
+
+.status-dot.warning {
+  background: #ff9800;
+  box-shadow: 0 0 8px #ff9800;
+}
+
+.avatar-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
+}
+
+.avatar-container canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 具身状态条：聆听/思考/说话 + 情绪 + 关键动作 */
+.avatar-state-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.85);
+  border-top: 1px solid var(--border);
+  min-height: 36px;
+  flex-wrap: wrap;
+}
+
+.avatar-state-label {
+  display: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-dark);
+  padding: 2px 12px;
+  border-radius: 12px;
+  background: rgba(255, 154, 60, 0.12);
+}
+
+.avatar-state-label.active {
+  display: inline-block;
+  animation: pulse 1s infinite;
+}
+
+.avatar-state-emotion {
+  font-size: 13px;
+  color: var(--speaking);
+  padding: 2px 12px;
+  border-radius: 12px;
+  background: rgba(33, 150, 243, 0.1);
+}
+
+.avatar-state-action {
+  font-size: 13px;
+  color: var(--listening);
+  padding: 2px 12px;
+  border-radius: 12px;
+  background: rgba(255, 87, 34, 0.1);
+}
+
+.avatar-controls {
+  display: flex;
+  gap: 10px;
+  padding: 16px 20px;
+  justify-content: center;
+}
+
+.ctrl-btn {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 20px;
+  background: var(--panel-bg);
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+}
+
+.ctrl-btn:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.ctrl-btn.danger {
+  background: #fff0f0;
+  color: var(--error);
+}
+
+.ctrl-btn.danger:hover {
+  background: var(--error);
+  color: #fff;
+}
+
+/* 右侧对话面板 */
+.chat-panel {
+  width: 420px;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-bg);
+  border-left: 1px solid var(--border);
+}
+
+.chat-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.chat-header h2 {
+  font-size: 20px;
+  color: var(--primary-dark);
+}
+
+.chat-subtitle {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.msg {
+  display: flex;
+}
+
+.msg-user {
+  justify-content: flex-end;
+}
+
+.msg-assistant {
+  justify-content: flex-start;
+}
+
+.msg-system {
+  justify-content: center;
+}
+
+.bubble {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.msg-user .bubble {
+  background: var(--primary);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.msg-assistant .bubble {
+  background: #f5f5f5;
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+}
+
+.msg-system .bubble {
+  background: transparent;
+  color: var(--text-light);
+  font-size: 12px;
+}
+
+.chat-input {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.voice-btn {
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: #f5f5f5;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.voice-btn.active {
+  background: var(--listening);
+  animation: pulse 1s infinite;
+}
+
+#text-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  font-size: 14px;
+  outline: none;
+}
+
+#text-input:focus {
+  border-color: var(--primary);
+}
+
+.send-btn {
+  padding: 0 20px;
+  border: none;
+  border-radius: 22px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.send-btn:hover {
+  background: var(--primary-dark);
+}
+
+/* 记忆面板 */
+.memory-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 300px;
+  background: var(--panel-bg);
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transform: translateX(0);
+  transition: transform 0.3s;
+  z-index: 100;
+}
+
+.memory-panel.collapsed {
+  transform: translateX(100%);
+}
+
+.memory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.memory-header h3 {
+  font-size: 16px;
+  color: var(--primary-dark);
+}
+
+.memory-header button {
+  border: none;
+  background: transparent;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.memory-list {
+  list-style: none;
+  padding: 12px 20px;
+  overflow-y: auto;
+  max-height: calc(100vh - 60px);
+}
+
+.memory-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.memory-time {
+  display: block;
+  color: var(--text-light);
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.memory-text {
+  color: var(--text);
+}
+
+.memory-empty {
+  color: var(--text-light);
+  font-size: 13px;
+  text-align: center;
+  padding: 20px 0;
+}
